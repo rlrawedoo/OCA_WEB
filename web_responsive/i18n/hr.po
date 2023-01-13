@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-04-28 18:03+0000\n"
-"PO-Revision-Date: 2019-11-18 14:34+0000\n"
-"Last-Translator: Bole <bole@dajmi5.com>\n"
+"PO-Revision-Date: 2017-04-28 18:03+0000\n"
+"Last-Translator: Bole <bole@dajmi5.com>, 2017\n"
 "Language-Team: Croatian (https://www.transifex.com/oca/teams/23907/hr/)\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
@@ -18,154 +18,167 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.8\n"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/apps.xml:9
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
-msgid "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
-msgstr "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
+msgid "All"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:37
-#: code:addons/web_responsive/static/src/xml/menu.xml:40
-#: code:addons/web_responsive/static/src/xml/menu.xml:49
-#: code:addons/web_responsive/static/src/xml/menu.xml:52
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "Alt"
+msgid "CLEAR"
 msgstr ""
 
 #. module: web_responsive
 #: model:ir.model.fields,field_description:web_responsive.field_res_users__chatter_position
 msgid "Chatter Position"
-msgstr "Pozicija razgovora"
-
-#. module: web_responsive
-#. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:18
-#, python-format
-msgid "Close"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:40
-#: code:addons/web_responsive/static/src/xml/menu.xml:52
+#: code:addons/web_responsive/static/src/legacy/js/web_responsive.js:0
 #, python-format
-msgid "Control"
+msgid "Clear"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:57
-#: code:addons/web_responsive/static/src/xml/form_view.xml:96
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Create"
-msgstr "Kreiraj"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:71
-#: code:addons/web_responsive/static/src/xml/form_view.xml:110
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Discard"
-msgstr "Odbaci"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:50
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Edit"
-msgstr "Uredi"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:16
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
+#, python-format
+msgid "FILTER"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/apps_menu/apps_menu.xml:0
+#, python-format
+msgid "Home Menu"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/attachment_viewer/attachment_viewer.xml:0
 #, python-format
 msgid "Maximize"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:17
+#: code:addons/web_responsive/static/src/components/attachment_viewer/attachment_viewer.xml:0
 #, python-format
 msgid "Minimize"
 msgstr ""
 
 #. module: web_responsive
-#: selection:res.users,chatter_position:0
+#: model:ir.model.fields.selection,name:web_responsive.selection__res_users__chatter_position__normal
 msgid "Normal"
-msgstr "Normalno"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:27
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Quick actions"
-msgstr "Brze radnje"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:64
-#: code:addons/web_responsive/static/src/xml/form_view.xml:103
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
+#, python-format
+msgid "SEE RESULT"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Save"
-msgstr "Spremi"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/apps.xml:35
+#: code:addons/web_responsive/static/src/components/apps_menu/apps_menu.xml:0
 #, python-format
 msgid "Search menus..."
-msgstr "Pretraži izbornike..."
-
-#. module: web_responsive
-#. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:35
-#, python-format
-msgid "Select menu"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:29
-#: code:addons/web_responsive/static/src/xml/menu.xml:37
-#: code:addons/web_responsive/static/src/xml/menu.xml:49
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "Shift"
+msgid "Search..."
 msgstr ""
 
 #. module: web_responsive
-#: selection:res.users,chatter_position:0
+#: model:ir.model.fields.selection,name:web_responsive.selection__res_users__chatter_position__sided
 msgid "Sided"
-msgstr "Bočno"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:47
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
-msgid "User menu"
+msgid "Today"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/legacy/js/kanban_renderer_mobile.js:0
+#, python-format
+msgid "Undefined"
 msgstr ""
 
 #. module: web_responsive
 #: model:ir.model,name:web_responsive.model_res_users
 msgid "Users"
-msgstr "Korisnici"
-
-#. module: web_responsive
-#. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:9
-#, python-format
-msgid "false"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:8
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "modal o_modal_fullscreen o_document_viewer o_responsive_document_viewer"
+msgid "View switcher"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/hotkey/hotkey.xml:0
+#, python-format
+msgid "props.withAccessKey ? 'x' : false"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/hotkey/hotkey.xml:0
+#, python-format
+msgid "props.withAccessKey ? 'z' : false"
 msgstr ""
 
 #~ msgid "<span class=\"sr-only\">Toggle App Drawer</span>"

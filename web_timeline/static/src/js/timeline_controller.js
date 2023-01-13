@@ -1,26 +1,24 @@
-odoo.define('web_timeline.TimelineController', function (require) {
+odoo.define("web_timeline.TimelineController", function (require) {
     "use strict";
 
-    var AbstractController = require('web.AbstractController');
-    var dialogs = require('web.view_dialogs');
-    var core = require('web.core');
-    var time = require('web.time');
-    var Dialog = require('web.Dialog');
+    const AbstractController = require("web.AbstractController");
+    const dialogs = require("web.view_dialogs");
+    const core = require("web.core");
+    const time = require("web.time");
+    const Dialog = require("web.Dialog");
 
-    var _t = core._t;
+    const _t = core._t;
 
-    var TimelineController = AbstractController.extend({
+    const TimelineController = AbstractController.extend({
         custom_events: _.extend({}, AbstractController.prototype.custom_events, {
-            onGroupClick: '_onGroupClick',
-            onUpdate: '_onUpdate',
-            onRemove: '_onRemove',
-            onMove: '_onMove',
-            onAdd: '_onAdd',
-            onDuplicate: '_onDuplicate'
+            onGroupClick: "_onGroupClick",
+            onUpdate: "_onUpdate",
+            onRemove: "_onRemove",
+            onMove: "_onMove",
+            onAdd: "_onAdd",
         }),
 
         /**
-         * @constructor
          * @override
          */
         init: function (parent, model, renderer, params) {
@@ -38,96 +36,101 @@ odoo.define('web_timeline.TimelineController', function (require) {
          * @override
          */
         update: function (params, options) {
-            var res = this._super.apply(this, arguments);
-            if (_.isEmpty(params)){
+            const res = this._super.apply(this, arguments);
+            if (_.isEmpty(params)) {
                 return res;
             }
-            var defaults = _.defaults({}, options, {
-                adjust_window: true
+            const defaults = _.defaults({}, options, {
+                adjust_window: true,
             });
-            var self = this;
-            var domains = params.domain;
-            var contexts = params.context;
-            var group_bys = params.groupBy;
+            const domains = params.domain || this.renderer.last_domains || [];
+            const contexts = params.context || [];
+            const group_bys = params.groupBy || this.renderer.last_group_bys || [];
             this.last_domains = domains;
             this.last_contexts = contexts;
-            // select the group by
-            var n_group_bys = [];
-            if (this.renderer.arch.attrs.default_group_by) {
-                n_group_bys = this.renderer.arch.attrs.default_group_by.split(',');
-            }
-            if (group_bys.length) {
-                n_group_bys = group_bys;
+            // Select the group by
+            let n_group_bys = group_bys;
+            if (!n_group_bys.length && this.renderer.arch.attrs.default_group_by) {
+                n_group_bys = this.renderer.arch.attrs.default_group_by.split(",");
             }
             this.renderer.last_group_bys = n_group_bys;
             this.renderer.last_domains = domains;
 
-            var fields = this.renderer.fieldNames;
+            let fields = this.renderer.fieldNames;
             fields = _.uniq(fields.concat(n_group_bys));
-            return $.when(
+            $.when(
                 res,
-                self._rpc({
-                    model: self.model.modelName,
-                    method: 'search_read',
+                this._rpc({
+                    model: this.model.modelName,
+                    method: "search_read",
                     kwargs: {
                         fields: fields,
                         domain: domains,
+                        order: [{name: this.renderer.arch.attrs.default_group_by}],
                     },
-                    context: self.getSession().user_context,
-                }).then(function (data) {
-                    return self.renderer.on_data_loaded(data, n_group_bys, defaults.adjust_window);
-                })
+                    context: this.getSession().user_context,
+                }).then((data) =>
+                    this.renderer.on_data_loaded(
+                        data,
+                        n_group_bys,
+                        defaults.adjust_window
+                    )
+                )
             );
+            return res;
         },
 
         /**
-         * Gets triggered when a group in the timeline is clicked (by the TimelineRenderer).
+         * Gets triggered when a group in the timeline is
+         * clicked (by the TimelineRenderer).
          *
          * @private
+         * @param {EventObject} event
          * @returns {jQuery.Deferred}
          */
         _onGroupClick: function (event) {
-            var groupField = this.renderer.last_group_bys[0];
+            const groupField = this.renderer.last_group_bys[0];
             return this.do_action({
-                type: 'ir.actions.act_window',
-                res_model: this.renderer.view.fields[groupField].relation,
+                type: "ir.actions.act_window",
+                res_model: this.renderer.fields[groupField].relation,
                 res_id: event.data.item.group,
-                target: 'new',
-                views: [[false, 'form']]
+                target: "new",
+                views: [[false, "form"]],
             });
         },
 
         /**
-         * Opens a form view of a clicked timeline item (triggered by the TimelineRenderer).
+         * Opens a form view of a clicked timeline
+         * item (triggered by the TimelineRenderer).
          *
          * @private
+         * @param {EventObject} event
          */
         _onUpdate: function (event) {
-            var self = this;
             this.renderer = event.data.renderer;
-            var rights = event.data.rights;
-            var item = event.data.item;
-            var id = item.evt.id;
-            var title = item.evt.__name;
+            const rights = event.data.rights;
+            const item = event.data.item;
+            const id = Number(item.evt.id) || item.evt.id;
+            const title = item.evt.__name;
             if (this.open_popup_action) {
                 new dialogs.FormViewDialog(this, {
                     res_model: this.model.modelName,
-                    res_id: parseInt(id, 10).toString() === id ? parseInt(id, 10) : id,
+                    res_id: id,
                     context: this.getSession().user_context,
                     title: title,
                     view_id: Number(this.open_popup_action),
-                    on_saved: function () {
-                        self.write_completed();
+                    on_saved: () => {
+                        this.write_completed();
                     },
                 }).open();
             } else {
-                var mode = 'readonly';
+                let mode = "readonly";
                 if (rights.write) {
-                    mode = 'edit';
+                    mode = "edit";
                 }
-                this.trigger_up('switch_view', {
-                    view_type: 'form',
-                    res_id: parseInt(id, 10).toString() === id ? parseInt(id, 10) : id,
+                this.trigger_up("switch_view", {
+                    view_type: "form",
+                    res_id: id,
                     mode: mode,
                     model: this.model.modelName,
                 });
@@ -135,94 +138,96 @@ odoo.define('web_timeline.TimelineController', function (require) {
         },
 
         /**
-         * Gets triggered when a timeline item is duplicated (triggered by the TimelineRenderer).
+         * Gets triggered when a timeline item is
+         * moved (triggered by the TimelineRenderer).
          *
          * @private
-         */
-        _onDuplicate: function (event) {
-            var self = this;
-            return this._rpc({
-                model: this.model.modelName,
-                method: 'copy',
-                args: [event.data.id],
-                context: this.getSession().user_context,
-            })
-            .then(function (res_id) {
-                self.create_completed([res_id]);
-                event.data.callback();
-            });
-        },
-
-        /**
-         * Gets triggered when a timeline item is moved (triggered by the TimelineRenderer).
-         *
-         * @private
+         * @param {EventObject} event
          */
         _onMove: function (event) {
-            var item = event.data.item;
-            var view = this.renderer.view;
-            var fields = view.fields;
-            var event_start = item.start;
-            var event_end = item.end;
-            var group = false;
+            const item = event.data.item;
+            const fields = this.renderer.fields;
+            const event_start = item.start;
+            const event_end = item.end;
+            let group = false;
             if (item.group !== -1) {
                 group = item.group;
             }
-            var data = {};
-            // In case of a move event, the date_delay stay the same, only date_start and stop must be updated
-            data[this.date_start] = time.auto_date_to_str(event_start, fields[this.date_start].type);
+            const data = {};
+            // In case of a move event, the date_delay stay the same,
+            // only date_start and stop must be updated
+            data[this.date_start] = time.auto_date_to_str(
+                event_start,
+                fields[this.date_start].type
+            );
             if (this.date_stop) {
                 // In case of instantaneous event, item.end is not defined
                 if (event_end) {
-                    data[this.date_stop] = time.auto_date_to_str(event_end, fields[this.date_stop].type);
+                    data[this.date_stop] = time.auto_date_to_str(
+                        event_end,
+                        fields[this.date_stop].type
+                    );
                 } else {
                     data[this.date_stop] = data[this.date_start];
                 }
             }
             if (this.date_delay && event_end) {
-                var diff_seconds = Math.round((event_end.getTime() - event_start.getTime()) / 1000);
+                const diff_seconds = Math.round(
+                    (event_end.getTime() - event_start.getTime()) / 1000
+                );
                 data[this.date_delay] = diff_seconds / 3600;
             }
-            if (this.renderer.last_group_bys && this.renderer.last_group_bys instanceof Array) {
-                data[this.renderer.last_group_bys[0]] = group;
-            }
+            const grouped_field = this.renderer.last_group_bys[0];
+            this._rpc({
+                model: this.modelName,
+                method: "fields_get",
+                args: [grouped_field],
+                context: this.getSession().user_context,
+            }).then(async (fields_processed) => {
+                if (
+                    this.renderer.last_group_bys &&
+                    this.renderer.last_group_bys instanceof Array &&
+                    fields_processed[grouped_field].type !== "many2many"
+                ) {
+                    data[this.renderer.last_group_bys[0]] = group;
+                }
 
-            this.moveQueue.push({
-                id: event.data.item.id,
-                data: data,
-                event: event
+                this.moveQueue.push({
+                    id: event.data.item.id,
+                    data: data,
+                    event: event,
+                });
+
+                this.debouncedInternalMove();
             });
-
-            this.debouncedInternalMove();
         },
 
         /**
-         * Write enqueued moves to Odoo. After all writes are finished it updates the view once
-         * (prevents flickering of the view when multiple timeline items are moved at once).
+         * Write enqueued moves to Odoo. After all writes are finished it updates
+         * the view once (prevents flickering of the view when multiple timeline items
+         * are moved at once).
          *
          * @returns {jQuery.Deferred}
          */
         internalMove: function () {
-            var self = this;
-            var queue = this.moveQueue.slice();
+            const queues = this.moveQueue.slice();
             this.moveQueue = [];
-            var defers = [];
-            _.each(queue, function(item) {
-                defers.push(self._rpc({
-                    model: self.model.modelName,
-                    method: 'write',
-                    args: [
-                        [item.event.data.item.id],
-                        item.data,
-                    ],
-                    context: self.getSession().user_context,
-                }).then(function() {
-                    item.event.data.callback(item.event.data.item);
-                }));
-            });
-            return $.when.apply($, defers).done(function() {
-                self.write_completed({
-                    adjust_window: false
+            const defers = [];
+            for (const item of queues) {
+                defers.push(
+                    this._rpc({
+                        model: this.model.modelName,
+                        method: "write",
+                        args: [[item.event.data.item.id], item.data],
+                        context: this.getSession().user_context,
+                    }).then(() => {
+                        item.event.data.callback(item.event.data.item);
+                    })
+                );
+            }
+            return $.when.apply($, defers).done(() => {
+                this.write_completed({
+                    adjust_window: false,
                 });
             });
         },
@@ -232,73 +237,51 @@ odoo.define('web_timeline.TimelineController', function (require) {
          * Requires user confirmation before it gets actually deleted.
          *
          * @private
+         * @param {EventObject} event
          * @returns {jQuery.Deferred}
          */
-        _onRemove: function (e) {
-            var self = this;
-
-            function do_it(event) {
-                return self._rpc({
-                    model: self.model.modelName,
-                    method: 'unlink',
-                    args: [
-                        [event.data.item.id],
-                    ],
-                    context: self.getSession().user_context,
-                }).then(function () {
-                    var unlink_index = false;
-                    for (var i = 0; i < self.model.data.data.length; i++) {
-                        if (self.model.data.data[i].id === event.data.item.id) {
-                            unlink_index = i;
-                        }
-                    }
-                    if (!isNaN(unlink_index)) {
-                        self.model.data.data.splice(unlink_index, 1);
-                    }
-
-                    event.data.callback(event.data.item);
-                });
-            }
-
-            var message = _t("Are you sure you want to delete this record?");
+        _onRemove: function (event) {
             var def = $.Deferred();
-            Dialog.confirm(this, message, {
+
+            Dialog.confirm(this, _t("Are you sure you want to delete this record?"), {
                 title: _t("Warning"),
-                confirm_callback: function() {
-                    do_it(e)
-                        .done(def.resolve.bind(def, true))
-                        .fail(def.reject.bind(def));
+                confirm_callback: () => {
+                    this.remove_completed(event).then(def.resolve.bind(def));
                 },
+                cancel_callback: def.resolve.bind(def),
             });
-            return def.promise();
+
+            return def;
         },
 
         /**
          * Triggered when a timeline item gets added and opens a form view.
          *
          * @private
+         * @param {EventObject} event
+         * @returns {dialogs.FormViewDialog}
          */
         _onAdd: function (event) {
-            var self = this;
-            var item = event.data.item;
+            const item = event.data.item;
             // Initialize default values for creation
-            var default_context = {};
-            default_context['default_'.concat(this.date_start)] = item.start;
+            const default_context = {};
+            default_context["default_".concat(this.date_start)] = item.start;
             if (this.date_delay) {
-                default_context['default_'.concat(this.date_delay)] = 1;
+                default_context["default_".concat(this.date_delay)] = 1;
             }
             if (this.date_start) {
-                default_context['default_'.concat(this.date_start)] = moment(item.start).add(1, 'hours').format(
-                    'YYYY-MM-DD HH:mm:ss'
-                );
+                default_context["default_".concat(this.date_start)] = moment(item.start)
+                    .utc()
+                    .format("YYYY-MM-DD HH:mm:ss");
             }
             if (this.date_stop && item.end) {
-                default_context['default_'.concat(this.date_stop)] = moment(item.end).add(1, 'hours').format(
-                    'YYYY-MM-DD HH:mm:ss'
-                );
+                default_context["default_".concat(this.date_stop)] = moment(item.end)
+                    .utc()
+                    .format("YYYY-MM-DD HH:mm:ss");
             }
             if (item.group > 0) {
-                default_context['default_'.concat(this.renderer.last_group_bys[0])] = item.group;
+                default_context["default_".concat(this.renderer.last_group_bys[0])] =
+                    item.group;
             }
             // Show popup
             new dialogs.FormViewDialog(this, {
@@ -306,12 +289,14 @@ odoo.define('web_timeline.TimelineController', function (require) {
                 res_id: null,
                 context: _.extend(default_context, this.context),
                 view_id: Number(this.open_popup_action),
-                on_saved: function (record) {
-                    self.create_completed([record.res_id]);
+                on_saved: (record) => {
+                    this.create_completed([record.res_id]);
                 },
-            }).open().on('closed', this, function () {
-                event.data.callback();
-            });
+            })
+                .open()
+                .on("closed", this, () => {
+                    event.data.callback();
+                });
 
             return false;
         },
@@ -320,39 +305,58 @@ odoo.define('web_timeline.TimelineController', function (require) {
          * Triggered upon completion of a new record.
          * Updates the timeline view with the new record.
          *
+         * @param {RecordId} id
          * @returns {jQuery.Deferred}
          */
         create_completed: function (id) {
-            var self = this;
             return this._rpc({
                 model: this.model.modelName,
-                method: 'read',
-                args: [
-                    id,
-                    this.model.fieldNames,
-                ],
+                method: "read",
+                args: [id, this.model.fieldNames],
                 context: this.context,
-            })
-            .then(function (records) {
-                var new_event = self.renderer.event_data_transform(records[0]);
-                var items = self.renderer.timeline.itemsData;
+            }).then((records) => {
+                var new_event = this.renderer.event_data_transform(records[0]);
+                var items = this.renderer.timeline.itemsData;
                 items.add(new_event);
-                self.renderer.timeline.setItems(items);
-                self.reload();
             });
         },
 
         /**
          * Triggered upon completion of writing a record.
+         * @param {ControllerOptions} options
          */
         write_completed: function (options) {
-            var params = {
+            const params = {
                 domain: this.renderer.last_domains,
                 context: this.context,
                 groupBy: this.renderer.last_group_bys,
             };
-
             this.update(params, options);
+        },
+
+        /**
+         * Triggered upon confirm of removing a record.
+         * @param {EventObject} event
+         * @returns {jQuery.Deferred}
+         */
+        remove_completed: function (event) {
+            return this._rpc({
+                model: this.modelName,
+                method: "unlink",
+                args: [[event.data.item.id]],
+                context: this.getSession().user_context,
+            }).then(() => {
+                let unlink_index = false;
+                for (var i = 0; i < this.model.data.data.length; i++) {
+                    if (this.model.data.data[i].id === event.data.item.id) {
+                        unlink_index = i;
+                    }
+                }
+                if (!isNaN(unlink_index)) {
+                    this.model.data.data.splice(unlink_index, 1);
+                }
+                event.data.callback(event.data.item);
+            });
         },
     });
 

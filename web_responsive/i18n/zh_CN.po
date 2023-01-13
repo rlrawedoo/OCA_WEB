@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-09-01 12:52+0000\n"
+"PO-Revision-Date: 2020-07-08 05:19+0000\n"
 "Last-Translator: 黎伟杰 <674416404@qq.com>\n"
 "Language-Team: none\n"
 "Language: zh_CN\n"
@@ -14,23 +14,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.8\n"
+"X-Generator: Weblate 3.10\n"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/apps.xml:9
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
-msgid "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
-msgstr "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
+msgid "All"
+msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:37
-#: code:addons/web_responsive/static/src/xml/menu.xml:40
-#: code:addons/web_responsive/static/src/xml/menu.xml:49
-#: code:addons/web_responsive/static/src/xml/menu.xml:52
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "Alt"
+msgid "CLEAR"
 msgstr ""
 
 #. module: web_responsive
@@ -40,109 +37,119 @@ msgstr "聊天位置"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:18
+#: code:addons/web_responsive/static/src/legacy/js/web_responsive.js:0
 #, python-format
-msgid "Close"
+msgid "Clear"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:40
-#: code:addons/web_responsive/static/src/xml/menu.xml:52
-#, python-format
-msgid "Control"
-msgstr ""
-
-#. module: web_responsive
-#. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:57
-#: code:addons/web_responsive/static/src/xml/form_view.xml:96
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Create"
 msgstr "创建"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:71
-#: code:addons/web_responsive/static/src/xml/form_view.xml:110
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Discard"
 msgstr "丢弃"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:50
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Edit"
 msgstr "编辑"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:16
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
-msgid "Maximize"
+msgid "FILTER"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:17
+#: code:addons/web_responsive/static/src/components/apps_menu/apps_menu.xml:0
 #, python-format
-msgid "Minimize"
+msgid "Home Menu"
 msgstr ""
 
 #. module: web_responsive
-#: selection:res.users,chatter_position:0
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/attachment_viewer/attachment_viewer.xml:0
+#, python-format
+msgid "Maximize"
+msgstr "最大化"
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/attachment_viewer/attachment_viewer.xml:0
+#, python-format
+msgid "Minimize"
+msgstr "最小化"
+
+#. module: web_responsive
+#: model:ir.model.fields.selection,name:web_responsive.selection__res_users__chatter_position__normal
 msgid "Normal"
 msgstr "正常"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:27
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Quick actions"
 msgstr "快捷方式"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/form_view.xml:64
-#: code:addons/web_responsive/static/src/xml/form_view.xml:103
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
+#: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
+#, python-format
+msgid "SEE RESULT"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
 msgid "Save"
 msgstr "保存"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/apps.xml:35
+#: code:addons/web_responsive/static/src/components/apps_menu/apps_menu.xml:0
 #, python-format
 msgid "Search menus..."
 msgstr "搜索菜单..."
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:35
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "Select menu"
+msgid "Search..."
 msgstr ""
 
 #. module: web_responsive
-#. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:29
-#: code:addons/web_responsive/static/src/xml/menu.xml:37
-#: code:addons/web_responsive/static/src/xml/menu.xml:49
-#, python-format
-msgid "Shift"
-msgstr ""
-
-#. module: web_responsive
-#: selection:res.users,chatter_position:0
+#: model:ir.model.fields.selection,name:web_responsive.selection__res_users__chatter_position__sided
 msgid "Sided"
 msgstr "侧面"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/menu.xml:47
+#: code:addons/web_responsive/static/src/legacy/xml/form_buttons.xml:0
 #, python-format
-msgid "User menu"
+msgid "Today"
+msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/legacy/js/kanban_renderer_mobile.js:0
+#, python-format
+msgid "Undefined"
 msgstr ""
 
 #. module: web_responsive
@@ -152,14 +159,42 @@ msgstr "用户"
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:9
+#: code:addons/web_responsive/static/src/components/control_panel/control_panel.xml:0
 #, python-format
-msgid "false"
+msgid "View switcher"
 msgstr ""
 
 #. module: web_responsive
 #. openerp-web
-#: code:addons/web_responsive/static/src/xml/document_viewer.xml:8
+#: code:addons/web_responsive/static/src/components/hotkey/hotkey.xml:0
 #, python-format
-msgid "modal o_modal_fullscreen o_document_viewer o_responsive_document_viewer"
+msgid "props.withAccessKey ? 'x' : false"
 msgstr ""
+
+#. module: web_responsive
+#. openerp-web
+#: code:addons/web_responsive/static/src/components/hotkey/hotkey.xml:0
+#, python-format
+msgid "props.withAccessKey ? 'z' : false"
+msgstr ""
+
+#~ msgid "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
+#~ msgstr "#menu_id=#{app.menuID}&action_id=#{app.actionID}"
+
+#~ msgid "Close"
+#~ msgstr "关闭"
+
+#~ msgid ""
+#~ "btn btn-secondary o_mail_discuss_button_multi_user_channel d-md-block d-"
+#~ "none"
+#~ msgstr ""
+#~ "btn btn-secondary o_mail_discuss_button_multi_user_channel d-md-block d-"
+#~ "none"
+
+#~ msgid "false"
+#~ msgstr "false"
+
+#~ msgid ""
+#~ "modal o_modal_fullscreen o_document_viewer o_responsive_document_viewer"
+#~ msgstr ""
+#~ "modal o_modal_fullscreen o_document_viewer o_responsive_document_viewer"

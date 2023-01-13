@@ -3,3 +3,6 @@
 * `CorporateHub <https://corporatehub.eu/>`__
 
   * Alexey Pelykh <alexey.pelykh@corphub.eu>
+
+* Manuel Calero - Tecnativa
+* Matias Peralta, Juan Rivero - Adhoc

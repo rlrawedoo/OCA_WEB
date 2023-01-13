@@ -1,4 +1,4 @@
-odoo.define( "web_widget_x2many_2d_matrix.matrix_limit_extend", function (require) {
+odoo.define("web_widget_x2many_2d_matrix.matrix_limit_extend", function (require) {
     "use strict";
 
     var FormView = require("web.FormView");

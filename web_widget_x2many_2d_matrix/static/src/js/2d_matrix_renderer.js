@@ -2,26 +2,26 @@
  * Copyright 2018 Brainbean Apps
  * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). */
 
-odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (require) {
+odoo.define("web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer", function (require) {
     "use strict";
 
-    var BasicRenderer = require('web.BasicRenderer');
-    var config = require('web.config');
-    var core = require('web.core');
-    var field_utils = require('web.field_utils');
+    var BasicRenderer = require("web.BasicRenderer");
+    var config = require("web.config");
+    var core = require("web.core");
+    var field_utils = require("web.field_utils");
+    var utils = require("web.utils");
     var _t = core._t;
-    
+
     var FIELD_CLASSES = {
-        float: 'o_list_number',
-        integer: 'o_list_number',
-        monetary: 'o_list_number',
-        text: 'o_list_text',
+        float: "o_list_number",
+        integer: "o_list_number",
+        monetary: "o_list_number",
+        text: "o_list_text",
     };
 
     // X2Many2dMatrixRenderer is heavily inspired by Odoo's ListRenderer
     // and is reusing portions of code from list_renderer.js
     var X2Many2dMatrixRenderer = BasicRenderer.extend({
-
         /**
          * @override
          */
@@ -55,35 +55,35 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         _renderView: function () {
             var self = this;
 
-            this.$el
-                .removeClass('table-responsive')
-                .empty();
+            this.$el.removeClass("table-responsive").empty();
 
             // Display a nice message if there's no data to display
             if (!self.rows.length) {
-                var $alert = $('<div>', {'class': 'alert alert-info'});
-                $alert.text(_t('Sorry no matrix data to display.'));
+                var $alert = $("<div>", {class: "alert alert-info"});
+                $alert.text(_t("Sorry no matrix data to display."));
                 this.$el.append($alert);
                 return this._super();
             }
 
-            var $table = $('<table>').addClass(
-                'o_list_view table table-condensed table-striped ' +
-                'o_x2many_2d_matrix '
+            var $table = $("<table>").addClass(
+                "o_list_view table table-condensed table-striped " +
+                    "o_x2many_2d_matrix "
             );
-            this.$el
-                .addClass('table-responsive')
-                .append($table);
+            this.$el.addClass("table-responsive").append($table);
 
             this._computeColumnAggregates();
             this._computeRowAggregates();
 
-            $table
-                .append(this._renderHeader())
-                .append(this._renderBody());
+            // We need to initialize the deferred list object for inherited functions that use this.defs even if it
+            // is empty at the moment.
+            var defs = [];
+            this.defs = defs;
+
+            $table.append(this._renderHeader()).append(this._renderBody());
             if (self.matrix_data.show_column_totals) {
                 $table.append(this._renderFooter());
             }
+            delete this.defs;
             return this._super();
         },
 
@@ -97,9 +97,9 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} The table body element just filled.
          */
         _renderBody: function () {
-            var $body = $('<tbody>').append(this._renderRows());
-            _.each($body.find('input'), function (td, i) {
-                $(td).attr('tabindex', i);
+            var $body = $("<tbody>").append(this._renderRows());
+            _.each($body.find("input"), function (td, i) {
+                $(td).attr("tabindex", i);
             });
             return $body;
         },
@@ -112,15 +112,12 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} The thead element that was inserted into.
          */
         _renderHeader: function () {
-            var $tr = $('<tr>').append('<th/>');
-            $tr = $tr.append(_.map(
-                this.columns,
-                this._renderHeaderCell.bind(this)
-            ));
+            var $tr = $("<tr>").append("<th/>");
+            $tr = $tr.append(_.map(this.columns, this._renderHeaderCell.bind(this)));
             if (this.matrix_data.show_row_totals) {
-                $tr.append($('<th/>', {class: 'total'}));
+                $tr.append($("<th/>", {class: "total"}));
             }
-            return $('<thead>').append($tr);
+            return $("<thead>").append($tr);
         },
 
         /**
@@ -135,30 +132,31 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         _renderHeaderCell: function (node) {
             var name = node.attrs.name;
             var field = this.state.fields[name];
-            var $th = $('<th>');
+            var $th = $("<th>");
             if (!field) {
                 return $th;
             }
             var description = null;
             if (node.attrs.widget) {
-                description = this.state.fieldsInfo.list[name]
-                    .Widget.prototype.description;
+                description =
+                    this.state.fieldsInfo.list[name].Widget.prototype.description;
             }
             if (_.isNull(description)) {
                 description = node.attrs.string || field.string;
             }
-            $th.text(description).data('name', name);
+            $th.text(description).data("name", name);
 
             if (
-                field.type === 'float' || field.type === 'integer' ||
-                field.type === 'monetary'
+                field.type === "float" ||
+                field.type === "integer" ||
+                field.type === "monetary"
             ) {
-                $th.addClass('text-right');
+                $th.addClass("text-right");
             } else {
-                $th.addClass('text-center');
+                $th.addClass("text-center");
             }
 
-            if (config.debug) {
+            if (config.isDebug()) {
                 var fieldDescr = {
                     field: field,
                     name: name,
@@ -178,10 +176,13 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {String} a string with the generated html.
          */
         _renderRows: function () {
-            return _.map(this.rows, function (row) {
-                row.attrs.name = this.matrix_data.field_value;
-                return this._renderRow(row);
-            }.bind(this));
+            return _.map(
+                this.rows,
+                function (row) {
+                    row.attrs.name = this.matrix_data.field_value;
+                    return this._renderRow(row);
+                }.bind(this)
+            );
         },
 
         /**
@@ -195,15 +196,17 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} the <tr> element that has been rendered.
          */
         _renderRow: function (row) {
-            var $tr = $('<tr/>', {class: 'o_data_row'}),
+            var $tr = $("<tr/>", {class: "o_data_row"}),
                 _data = _.without(row.data, undefined);
             $tr = $tr.append(this._renderLabelCell(_data[0]));
-            var $cells = _.map(this.columns, function (column, index) {
-                var record = row.data[index];
-                // Make the widget use our field value for each cell
-                column.attrs.name = this.matrix_data.field_value;
-                return this._renderBodyCell(record, column, index, {mode:''});
-            }.bind(this));
+            var $cells = this.columns.map(
+                function (column, index) {
+                    var record = row.data[index];
+                    // Make the widget use our field value for each cell
+                    column.attrs.name = this.matrix_data.field_value;
+                    return this._renderBodyCell(record, column, index, {mode: ""});
+                }.bind(this)
+            );
             $tr = $tr.append($cells);
             if (row.aggregate) {
                 $tr.append(this._renderAggregateRowCell(row));
@@ -219,9 +222,9 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} the cell that was rendered.
          */
         _renderLabelCell: function (record) {
-            var $td = $('<td>');
+            var $td = $("<td>");
             var value = record.data[this.matrix_data.field_y_axis];
-            if (value.type === 'record') {
+            if (value.type === "record") {
                 // We have a related record
                 value = value.data.display_name;
             }
@@ -238,7 +241,7 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} The rendered cell.
          */
         _renderAggregateRowCell: function (row) {
-            var $cell = $('<td/>', {class: 'row-total'});
+            var $cell = $("<td/>", {class: "row-total"});
             this.applyAggregateValue($cell, row);
             return $cell;
         },
@@ -256,24 +259,22 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} the rendered cell.
          */
         _renderBodyCell: function (record, node, colIndex, options) {
-            var tdClassName = 'o_data_cell';
-            if (node.tag === 'field') {
-                var typeClass = FIELD_CLASSES[
-                    this.state.fields[node.attrs.name].type
-                ];
+            var tdClassName = "o_data_cell";
+            if (node.tag === "field") {
+                var typeClass = FIELD_CLASSES[this.state.fields[node.attrs.name].type];
                 if (typeClass) {
-                    tdClassName += ' ' + typeClass;
+                    tdClassName += " " + typeClass;
                 }
                 if (node.attrs.widget) {
-                    tdClassName += ' o_' + node.attrs.widget + '_cell';
+                    tdClassName += " o_" + node.attrs.widget + "_cell";
                 }
             }
 
             // TODO roadmap: here we should collect possible extra params
             // the user might want to attach to each single cell.
 
-            var $td = $('<td>', {
-                'class': tdClassName,
+            var $td = $("<td>", {
+                class: tdClassName,
             });
 
             if (_.isUndefined(record)) {
@@ -281,8 +282,8 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
                 return $td;
             }
             $td.attr({
-                'data-form-id': record.id,
-                'data-id': record.data.id,
+                "data-form-id": record.id,
+                "data-id": record.data.id,
             });
 
             // We register modifiers on the <td> element so that it gets
@@ -291,7 +292,7 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
                 node,
                 record,
                 $td,
-                _.pick(options, 'mode')
+                _.pick(options, "mode")
             );
             // If the invisible modifiers is true, the <td> element is
             // left empty. Indeed, if the modifiers was to change the
@@ -303,11 +304,10 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
             // Enforce mode of the parent
             options.mode = this.getParent().mode;
 
-            if (node.tag === 'widget') {
+            if (node.tag === "widget") {
                 return $td.append(this._renderWidget(record, node));
             }
-            var $el = this._renderFieldWidget(node, record, _.pick(options, 'mode'));
-            this._handleAttributes($el, node);
+            var $el = this._renderFieldWidget(node, record, _.pick(options, "mode"));
             return $td.append($el);
         },
 
@@ -320,12 +320,12 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         _renderFooter: function () {
             var $cells = this._renderAggregateColCells();
             if ($cells) {
-                var $tr = $('<tr>').append('<td/>').append($cells);
+                var $tr = $("<tr>").append("<td/>").append($cells);
                 var $total_cell = this._renderTotalCell();
                 if ($total_cell) {
                     $tr.append($total_cell);
                 }
-                return $('<tfoot>').append($tr);
+                return $("<tfoot>").append($tr);
             }
         },
 
@@ -336,12 +336,14 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          * @returns {jQueryElement} The td element with the total in it.
          */
         _renderTotalCell: function () {
-            if (!this.matrix_data.show_column_totals ||
-                !this.matrix_data.show_row_totals) {
+            if (
+                !this.matrix_data.show_column_totals ||
+                !this.matrix_data.show_row_totals
+            ) {
                 return;
             }
 
-            var $cell = $('<td>', {class: 'col-total'});
+            var $cell = $("<td>", {class: "col-total"});
             this.applyAggregateValue($cell, this.total);
             return $cell;
         },
@@ -356,12 +358,12 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
             var self = this;
 
             return _.map(this.columns, function (column) {
-                var $cell = $('<td>');
-                if (config.debug) {
+                var $cell = $("<td>");
+                if (config.isDebug()) {
                     $cell.addClass(column.attrs.name);
                 }
                 if (column.aggregate) {
-                    self.applyAggregateValue($cell, column)
+                    self.applyAggregateValue($cell, column);
                 }
                 return $cell;
             });
@@ -383,7 +385,7 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
                 return;
             }
             var type = field.type;
-            if (!~['integer', 'float', 'monetary'].indexOf(type)) {
+            if (!~["integer", "float", "monetary"].indexOf(type)) {
                 return;
             }
             this.total = {
@@ -391,25 +393,38 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
                     name: fname,
                 },
                 aggregate: {
-                    help: _t('Sum Total'),
+                    help: _t("Sum Total"),
                     value: 0,
                 },
             };
-            _.each(this.columns, function (column, index) {
-                column.aggregate = {
-                    help: _t('Sum'),
-                    value: 0,
-                };
-                _.each(this.rows, function (row) {
-                    // TODO Use only one _.propertyOf in underscore 1.9.0+
-                    try {
-                        column.aggregate.value += row.data[index].data[fname];
-                    } catch (error) {
-                        // Nothing to do
-                    }
-                });
-                this.total.aggregate.value += column.aggregate.value;
-            }.bind(this));
+            _.each(
+                this.columns,
+                function (column, index) {
+                    column.aggregate = {
+                        help: _t("Sum"),
+                        value: 0,
+                    };
+                    _.each(this.rows, function (row) {
+                        // TODO Use only one _.propertyOf in underscore 1.9.0+
+                        try {
+                            column.aggregate.value += row.data[index].data[fname];
+                        } catch (error) {
+                            // Nothing to do
+                        }
+                    });
+                    this.total.aggregate.value += column.aggregate.value;
+                }.bind(this)
+            );
+        },
+
+        _getRecord: function (recordId) {
+            var record = null;
+            utils.traverse_records(this.state, function (r) {
+                if (r.id === recordId) {
+                    record = r;
+                }
+            });
+            return record;
         },
 
         /**
@@ -423,12 +438,12 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         },
 
         /**
-        * Traverse the fields matrix with the keyboard
-        *
-        * @override
-        * @private
-        * @param {OdooEvent} event "navigation_move" event
-        */
+         * Traverse the fields matrix with the keyboard
+         *
+         * @override
+         * @private
+         * @param {OdooEvent} event "navigation_move" event
+         */
         _onNavigationMove: function (event) {
             var widgets = this.__parentedChildren,
                 index = widgets.indexOf(event.target),
@@ -467,12 +482,12 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
                 return;
             }
             var type = field.type;
-            if (!~['integer', 'float', 'monetary'].indexOf(type)) {
+            if (!~["integer", "float", "monetary"].indexOf(type)) {
                 return;
             }
             _.each(this.rows, function (row) {
                 row.aggregate = {
-                    help: _t('Sum'),
+                    help: _t("Sum"),
                     value: 0,
                 };
                 _.each(row.data, function (col) {
@@ -502,11 +517,10 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
             var value = axis.aggregate.value;
             var help = axis.aggregate.help;
             var fieldInfo = this.state.fieldsInfo.list[axis.attrs.name];
-            var formatFunc = field_utils.format[
-                fieldInfo.widget ? fieldInfo.widget : field.type
-            ];
-            var formattedValue = formatFunc(value, field, { escape: true });
-            $cell.addClass('o_list_number').attr('title', help).html(formattedValue);
+            var formatFunc =
+                field_utils.format[fieldInfo.widget ? fieldInfo.widget : field.type];
+            var formattedValue = formatFunc(value, field, {escape: true});
+            $cell.addClass("o_list_number").attr("title", help).html(formattedValue);
         },
 
         /**
@@ -570,7 +584,7 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
          */
         _refreshColTotals: function () {
             this._computeColumnAggregates();
-            this.$('tfoot').replaceWith(this._renderFooter());
+            this.$("tfoot").replaceWith(this._renderFooter());
         },
 
         /**
@@ -579,10 +593,11 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         _refreshRowTotals: function () {
             var self = this;
             this._computeRowAggregates();
-            var $rows = self.$el.find('tr.o_data_row');
+            var $rows = self.$el.find("tr.o_data_row");
             _.each(self.rows, function (row, i) {
                 if (row.aggregate) {
-                    $($rows[i]).find('.row-total')
+                    $($rows[i])
+                        .find(".row-total")
                         .replaceWith(self._renderAggregateRowCell(row));
                 }
             });
@@ -596,7 +611,6 @@ odoo.define('web_widget_x2many_2d_matrix.X2Many2dMatrixRenderer', function (requ
         getEditableRecordID: function () {
             return null;
         },
-
     });
 
     return X2Many2dMatrixRenderer;
